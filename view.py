@@ -32,12 +32,12 @@ def bid_status():
     bid_status_list = []
     if auction_list:
         auction_list = json.loads(auction_list)
-        #for auction in auction_list:
-        #    bid_status_list.append(_get_bid_status(auction))
+        for auction in auction_list:
+            bid_status_list.append(_get_bid_status(auction))
 
-        pool = Pool(5)
-        async_result = pool.map(_get_bid_status, auction_list)
-    bid_status_list = [result for result in async_result]
+        #pool = Pool(5)
+        #async_result = pool.map(_get_bid_status, auction_list)
+    #bid_status_list = [result for result in async_result]
 
     return render_template('bid_status.html', bid_status_list=bid_status_list)
 

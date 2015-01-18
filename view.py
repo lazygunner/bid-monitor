@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 
 import json
-from threading import Thread
+from multiprocessing import Pool
 
 from flask import Flask, render_template, request
 from flask_redis import Redis
@@ -15,20 +15,29 @@ app = Flask(__name__)
 redis_store = Redis(app)
 
 
+def _get_bid_status(auction):
+    url = auction['url']
+    bottom_price = int(auction['bottomPrice'])
+    bm = BidMonitor(url, bottom_price)
+    bm.monitor()
+    bid_status_dict = bm.analyze_statue()
+
+    return bid_status_dict
+
+
 @app.route('/')
 def bid_status():
+
     auction_list = redis_store.get('auctions')
     bid_status_list = []
     if auction_list:
         auction_list = json.loads(auction_list)
+        #for auction in auction_list:
+        #    bid_status_list.append(_get_bid_status(auction))
 
-        for auction in auction_list:
-            url = auction['url']
-            bottom_price = int(auction['bottomPrice'])
-            bm = BidMonitor(url, bottom_price)
-            bm.monitor()
-            bid_status_dict = bm.analyze_statue()
-            bid_status_list.append(bid_status_dict)
+        pool = Pool(5)
+        async_result = pool.map(_get_bid_status, auction_list)
+    bid_status_list = [result for result in async_result]
 
     return render_template('bid_status.html', bid_status_list=bid_status_list)
 
@@ -51,4 +60,4 @@ def auction_list():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(port=8877)
+    app.run(port=8888)

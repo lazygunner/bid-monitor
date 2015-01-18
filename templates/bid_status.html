@@ -17,6 +17,7 @@
                         <th>当前出价</th>
                         <th>底价</th>
                         <th>加价幅度</th>
+                        <th>剩余加价次数</th>
                         <th>剩余时间</th>
                         <th>状态</th>
                     </tr>
@@ -29,6 +30,7 @@
                         <td>{{data.price_now}}</td>
                         <td>{{data.bottom_price}}</td>
                         <td>{{data.raise_price}}</td>
+                        <td>{{data.remain_count}}</td>
                         <td>{{data.remain_time}}</td>
                         <td>
                         {% if data.status == 'ok' %}

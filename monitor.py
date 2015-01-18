@@ -36,6 +36,9 @@ class BidMonitor(object):
         # 参与人数
         self.xpaths['bidder_count'] = '//div[@class="pm-people"]/span[1]/em/text()'
 
+        # 拍卖结果
+        self.xpaths['bid_result'] = '//div[@class="pm-operation-con"]/h2/text()'
+
     def _parse_price(self, price_str_raw):
         price = ''
         for price_str in price_str_raw.split(','):
@@ -48,14 +51,17 @@ class BidMonitor(object):
             print '[%s] parse xpath error!' % param_name
             return -1
 
+        # price now 在成交前后的格式不一样
         if param_name == 'price_now':
             value_raw = value_list[0]
             p = re.compile(r'\r\n\t*(.*?)\r\n')
             price_now_list = p.findall(value_raw)
             if len(price_now_list) == 0:
                 print 're get price_now error!'
-            value = self._parse_price(price_now_list[0])
-        elif param_name == 'name':
+                value = self._parse_price(value_raw)
+            else:
+                value = self._parse_price(price_now_list[0])
+        elif param_name in ['name', 'bid_result']:
             value = value_list[0]
         else:
             value = self._parse_price(value_list[0])
@@ -89,6 +95,7 @@ class BidMonitor(object):
         else:
             status = 'danger'
 
+        self.bid_status_dict['remain_count'] = int(remain_count)
         self.bid_status_dict['status'] = status
         return self.bid_status_dict
 

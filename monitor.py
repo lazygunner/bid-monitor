@@ -37,12 +37,14 @@ class BidMonitor(object):
         self.xpaths['bidder_count'] = '//div[@class="pm-people"]/span[1]/em/text()'
 
         # 拍卖结果
-        self.xpaths['bid_result'] = '//div[@class="pm-operation-con"]/h2/text()'
+        self.xpaths['bid_result'] = '//div[@class="pm-operation-con"]/h2/span//text()'
 
     def _parse_price(self, price_str_raw):
         price = ''
         for price_str in price_str_raw.split(','):
             price += price_str
+        if price == '':
+            price = 0
         return int(price)
 
     def _get_xpath_value(self, tree, param_name, xpath_str):
@@ -57,7 +59,6 @@ class BidMonitor(object):
             p = re.compile(r'\r\n\t*(.*?)\r\n')
             price_now_list = p.findall(value_raw)
             if len(price_now_list) == 0:
-                print 're get price_now error!'
                 value = self._parse_price(value_raw)
             else:
                 value = self._parse_price(price_now_list[0])

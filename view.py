@@ -1,9 +1,7 @@
 # -*- encoding:utf-8 -*-
-
 import json
-from multiprocessing import Pool
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_redis import Redis
 
 from monitor import BidMonitor
@@ -13,6 +11,39 @@ REDIS_DATABASE = 0
 
 app = Flask(__name__)
 redis_store = Redis(app)
+
+UPLOAD_FOLDER = '/tmp/uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'csv'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    auction_list = redis_store.get('auctions')
+    if auction_list:
+        auction_list = json.loads(auction_list)
+    else:
+        auction_list = []
+
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            # filename = file.filename
+            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            for line in file.readlines():
+                values = line.split(',')
+                auction_list.append({
+                    'url': values[0],
+                    'bottomPrice': values[1]
+                })
+            redis_store.set('auctions', json.dumps(auction_list))
+
+    return jsonify({'auction_list': auction_list})
 
 
 def _get_bid_status(auction):
@@ -47,10 +78,8 @@ def auction_list():
     if request.method == 'POST':
         data = request.values.to_dict().get('auction_list', [])
         redis_store.set('auctions', data)
-        auction_list = redis_store.get('auctions')
-    else:
-        auction_list = redis_store.get('auctions')
 
+    auction_list = redis_store.get('auctions')
     if auction_list:
         auction_list = json.loads(auction_list)
     else:

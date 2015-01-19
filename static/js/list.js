@@ -25,6 +25,10 @@ $(document).ready(function(){
 
     })
 
+    $("#deleteBtn").click(function(){
+        $.post("/delete")
+    })
+        
     $("#fileForm").submit(function(e){
     
         var formObj = $(this);
@@ -40,7 +44,11 @@ $(document).ready(function(){
             processData:false,
             success: function(data, textStatus, jqXHR)
             {
-                alert(data);
+                obj = JSON.parse(data);
+                if (obj.error == -1)
+                    alert("文件格式错误!")
+                else
+                    alert("上传成功,回到首页查看")
             },
             error: function(jqXHR, textStatus, errorThrown) 
             {

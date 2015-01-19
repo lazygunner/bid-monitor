@@ -30,20 +30,25 @@ def upload_file():
     else:
         auction_list = []
 
+    error = 0
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
             # filename = file.filename
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            for line in file.readlines():
-                values = line.split(',')
-                auction_list.append({
-                    'url': values[0],
-                    'bottomPrice': values[1]
-                })
-            redis_store.set('auctions', json.dumps(auction_list))
+            try:
+                for line in file.readlines():
+                    values = line.split(',')
+                    auction_list.append({
+                        'url': values[0],
+                        'bottomPrice': values[1]
+                    })
 
-    return jsonify({'auction_list': auction_list})
+                redis_store.set('auctions', json.dumps(auction_list))
+            except Exception:
+                error = -1
+
+    return jsonify({'error': error})
 
 
 def _get_bid_status(auction):
@@ -86,6 +91,12 @@ def auction_list():
         auction_list = []
     return render_template('list.html', auction_list=auction_list)
 
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete_all():
+    redis_store.delete('auctions')
+
+    return render_template('list.html', auction_list=[])
 
 if __name__ == '__main__':
     app.debug = True

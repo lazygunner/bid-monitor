@@ -26,7 +26,10 @@ $(document).ready(function(){
     })
 
     $("#deleteBtn").click(function(){
-        $.post("/delete")
+        $.post("/delete", function(){
+            location.reload()
+        });
+        
     })
         
     $("#fileForm").submit(function(e){

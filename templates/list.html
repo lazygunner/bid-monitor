@@ -1,63 +1,60 @@
-<html>
-    <head>
-        <script src={{ url_for('static', filename='js/jquery-2.1.3.min.js')}}></script>
-        <script src={{ url_for('static', filename='js/list.js')}}></script>
-    </head>
-    <body>
-        <div>
-        <table class="table table-striped table-hover " id="auctionTable" >
-            <thead>
-                <tr>
-                    <th>url</th>
-                    <th>底价</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for auction in auction_list %}
-                <tr>
-                    <td class='url'>{{auction.url}}</td>
-                    <td class='bottomPrice'>{{auction.bottomPrice}}</td>
-                    <td>删除</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="well bs-component" style="width:30%">
-        <form class="form-horizontal">
-            <fieldset>
-                <legend>拍品添加</legend>
-                <div class="form-group">
-                    <label for="inputURL" class="col-lg-2 control-label">URL</label>
-                    <div class="col-lg-10">
-                        <input type="text" class="form-control" id="inputURL" value="">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputBottomPrice" class="col-lg-2 control-label">底价</label>
-                    <div class="col-lg-10">
-                        <input type="bottomPrice" class="form-control" id="inputBottomPrice" placeholder="底价">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-lg-10 col-lg-offset-2">
-                    <button class="btn btn-default">清空</button>
-                    <div class="btn btn-danger" id="addAuction">添加单条</div>
-                    <div type="submit" class="btn btn-primary" id="submitData">保存到服务器</div>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        <form id="fileForm" method="post" enctype="multipart/form-data" action="/upload">
-        <legend>上传文件</legend>
-        <input name="file" type="file"><br/>
-        <button class="btn btn-danger" id="submitBtn" type="submit" >提交</button>
+{% extends "layout.html" %}
+{% block title %}管理{% endblock %}
+{% block content %}
 
+    <script src={{ url_for('static', filename='js/jquery-2.1.3.min.js')}}></script>
+    <script src={{ url_for('static', filename='js/list.js')}}></script>
+    <div>
+    <table class="table table-striped table-hover " id="auctionTable" >
+        <thead>
+            <tr>
+                <th>url</th>
+                <th>底价</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for auction in auction_list %}
+            <tr>
+                <td class='url'>{{auction.url}}</td>
+                <td class='bottomPrice'>{{auction.bottomPrice}}</td>
+                <td>删除</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="well bs-component" style="width:30%">
+    <form class="form-horizontal">
+        <fieldset>
+            <legend>拍品添加</legend>
+            <div class="form-group">
+                <label for="inputURL" class="col-lg-2 control-label">URL</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control" id="inputURL" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputBottomPrice" class="col-lg-2 control-label">底价</label>
+                <div class="col-lg-10">
+                    <input type="bottomPrice" class="form-control" id="inputBottomPrice" placeholder="底价">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                <button class="btn btn-default">清空</button>
+                <div class="btn btn-danger" id="addAuction">添加单条</div>
+                <div type="submit" class="btn btn-primary" id="submitData">保存到服务器</div>
+                </div>
+            </div>
+        </fieldset>
     </form>
-        <button class="btn btn-Default" id="deleteBtn" type="submit" >删除所有</button>
-    </div>
- 
-    </body>
-</html>
-<link href={{url_for('static', filename='css/bootswatch.min.css')}} rel="stylesheet">
+    <form id="fileForm" method="post" enctype="multipart/form-data" action="/upload">
+    <legend>上传文件</legend>
+    <input name="file" type="file"><br/>
+    <button class="btn btn-danger" id="submitBtn" type="submit" >提交</button>
+
+</form>
+    <button class="btn btn-Default" id="deleteBtn" type="submit" >删除所有</button>
+</div>
+{% endblock %}

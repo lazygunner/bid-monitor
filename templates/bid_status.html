@@ -1,53 +1,43 @@
-<!doctype html>
+{% extends "layout.html" %}
+{% block title %}拍卖监控{% endblock %}
+{% block content %}
+    <div class='bid-status'>
+        <table class="table table-striped table-hover ">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>拍品</th>
+                    <th>当前出价</th>
+                    <th>底价</th>
+                    <th>加价幅度</th>
+                    <th>剩余加价次数</th>
+                    <th>剩余时间</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in bid_status_list %}
+                <tr>
+                    <td>1</td>
+                    <td><a href='{{data.url}}'>{{data.name}}</a></td>
+                    <td>{{data.price_now}}</td>
+                    <td>{{data.bottom_price}}</td>
+                    <td>{{data.raise_price}}</td>
+                    <td>{{data.remain_count}}</td>
+                    <td>{{data.remain_time}}</td>
+                    <td>
+                    {% if data.status == 'ok' %}
+                    <span class="label label-success">OK</span>
+                    {% elif data.status == 'warn'%}
+                    <span class="label label-warning">接近底价</span>
+                    {% elif data.status == 'danger'%}
+                    <span class="label label-danger">距底价较远</span>
+                    {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<html>
-    <head>
-
-    </head>
-
-    <title>拍卖监控</title>
-
-    <body>
-        <div class='bid-status'>
-            <table class="table table-striped table-hover ">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>拍品</th>
-                        <th>当前出价</th>
-                        <th>底价</th>
-                        <th>加价幅度</th>
-                        <th>剩余加价次数</th>
-                        <th>剩余时间</th>
-                        <th>状态</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for data in bid_status_list %}
-                    <tr>
-                        <td>1</td>
-                        <td><a href='{{data.url}}'>{{data.name}}</a></td>
-                        <td>{{data.price_now}}</td>
-                        <td>{{data.bottom_price}}</td>
-                        <td>{{data.raise_price}}</td>
-                        <td>{{data.remain_count}}</td>
-                        <td>{{data.remain_time}}</td>
-                        <td>
-                        {% if data.status == 'ok' %}
-                        <span class="label label-success">OK</span>
-                        {% elif data.status == 'warn'%}
-                        <span class="label label-warning">接近底价</span>
-                        {% elif data.status == 'danger'%}
-                        <span class="label label-danger">距底价较远</span>
-                        {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </body>
-
-</html>
-
-<link href={{url_for('static', filename='css/bootswatch.min.css')}} rel="stylesheet">
+{% endblock %}

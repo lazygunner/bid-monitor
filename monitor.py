@@ -72,6 +72,8 @@ class BidMonitor(object):
             now = datetime.now()
             delta = over_time - now
             seconds = delta.seconds
+            if seconds >= 12 * 3600:
+                seconds = 0
             import time
             value = time.strftime('%H:%M:%S', time.gmtime(seconds))
             print 'over_time', over_time

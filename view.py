@@ -36,9 +36,12 @@ def upload_file():
         if file and allowed_file(file.filename):
             # filename = file.filename
             # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            url_list = ([auction['url'] for auction in auction_list])
             try:
                 for line in file.readlines():
                     values = line.split(',')
+                    if values[0] in url_list:
+                        continue
                     auction_list.append({
                         'url': values[0],
                         'bottomPrice': values[1]

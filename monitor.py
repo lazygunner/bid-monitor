@@ -1,5 +1,6 @@
 # -*- encoding:utf-8 -*-
 import re
+from datetime import datetime, timedelta
 
 import requests
 from lxml import html
@@ -37,7 +38,10 @@ class BidMonitor(object):
         self.xpaths['bidder_count'] = '//div[@class="pm-people"]/span[1]/em/text()'
 
         # 拍卖结果
-        self.xpaths['bid_result'] = '//div[@class="pm-operation-con"]/h2/span//text()'
+        self.xpaths['bid_result'] = '//div[@class="pm-operation-con"]/h2/span/text()'
+
+        # 倒计时
+        self.xpaths['remain_time'] = '//div[@class="pm-status fn-clear"]/span[@class="pm-time pm-over-time"]/span[@class="time-num pm-num"][3]/text()'
 
     def _parse_price(self, price_str_raw):
         price = ''
@@ -62,6 +66,16 @@ class BidMonitor(object):
                 value = self._parse_price(value_raw)
             else:
                 value = self._parse_price(price_now_list[0])
+        elif param_name == 'remain_time':
+            value = value_list[0]
+            over_time = datetime.strptime(value, '%H:%M')
+            now = datetime.now()
+            delta = over_time - now
+            seconds = delta.seconds
+            import time
+            value = time.strftime('%H:%M:%S', time.gmtime(seconds))
+            print 'over_time', over_time
+            print 'remain_time', value
         elif param_name in ['name', 'bid_result']:
             value = value_list[0]
         else:

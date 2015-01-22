@@ -1,6 +1,8 @@
 # -*- encoding:utf-8 -*-
 import re
+import logging
 from datetime import datetime, timedelta
+import time
 
 import requests
 from lxml import html
@@ -8,6 +10,8 @@ from lxml import html
 user_agent = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1)'
               'AppleWebKit/537.36 (KHTML, like Gecko)'
               'Chrome/39.0.2171.95 Safari/537.36')
+
+logger = logging.getLogger('bidMonitor.monitor')
 
 
 class BidMonitor(object):
@@ -54,7 +58,7 @@ class BidMonitor(object):
     def _get_xpath_value(self, tree, param_name, xpath_str):
         value_list = tree.xpath(xpath_str)
         if value_list == []:
-            print '[%s] parse xpath error!' % param_name
+            logger.error('[%s] parse xpath error!', param_name)
             return -1
 
         # price now 在成交前后的格式不一样
@@ -69,15 +73,15 @@ class BidMonitor(object):
         elif param_name == 'remain_time':
             value = value_list[0]
             over_time = datetime.strptime(value, '%H:%M')
-            now = datetime.now()
+            now = datetime.now().replace(year=1900, month=1, day=1)
             delta = over_time - now
             seconds = delta.seconds
             if seconds >= 12 * 3600:
                 seconds = 0
-            import time
             value = time.strftime('%H:%M:%S', time.gmtime(seconds))
-            print 'over_time', over_time
-            print 'remain_time', value
+            logger.debug('over_time: %s', over_time)
+            logger.debug('now_time: %s', now)
+            logger.debug('remain_time: %s', value)
         elif param_name in ['name', 'bid_result']:
             value = value_list[0]
         else:

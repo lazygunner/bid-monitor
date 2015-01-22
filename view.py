@@ -1,11 +1,18 @@
 # -*- encoding:utf-8 -*-
 import json
 from multiprocessing import Pool
+import logging
+import logging.config
 
 from flask import Flask, render_template, request, jsonify
 from flask_redis import Redis
 
 from monitor import BidMonitor
+
+
+logging.config.fileConfig('logging.conf')
+# create logger
+logger = logging.getLogger('bidMonitor')
 
 REDIS_URL = "redis://@localhost:6379"
 REDIS_DATABASE = 0
@@ -72,12 +79,12 @@ def bid_status():
     bid_status_list = []
     if auction_list:
         auction_list = json.loads(auction_list)
-        #for auction in auction_list:
-        #    bid_status_list.append(_get_bid_status(auction))
+        for auction in auction_list:
+            bid_status_list.append(_get_bid_status(auction))
 
-        pool = Pool(5)
-        async_result = pool.map(_get_bid_status, auction_list)
-        bid_status_list = [result for result in async_result]
+        #pool = Pool(5)
+        #async_result = pool.map(_get_bid_status, auction_list)
+        #bid_status_list = [result for result in async_result]
 
     return render_template('bid_status.html', bid_status_list=bid_status_list)
 

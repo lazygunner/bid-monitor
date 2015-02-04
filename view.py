@@ -109,14 +109,17 @@ def delete_all():
     return render_template('list.html', auction_list=[])
 
 
-@app.route('/update_gap_level', methods=['POST', 'GET'])
+@app.route('/gap_level', methods=['POST', 'GET'])
 def update_gap_level():
+    gap_level1 = 0
     if request.method == 'POST':
         gap_dict = request.values.to_dict().get('gap_dict', {})
         gap_level1 = int(json.loads(gap_dict).get("gap_level1", 10))
         redis_store.set('gap_level1', gap_level1)
-
-    return jsonify({'error': 0})
+    elif request.method == 'GET':
+         gap_level1 = redis_store.get('gap_level1') or 0
+    print gap_level1
+    return jsonify({'gap_level1': gap_level1})
 
 if __name__ == '__main__':
     app.debug = True

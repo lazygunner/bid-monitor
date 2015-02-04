@@ -27,10 +27,18 @@ $(document).ready(function(){
 
     $("#updateGapLevel").click(function(){
         var gap_dict = {"gap_level1":"0"}
-        gap_dict["gap_level1"] = int($("#gap_level1")[0].value)
+        gap_dict["gap_level1"] = $("#gap_level1")[0].value
         param = {'gap_dict': JSON.stringify(gap_dict)}
-        $.post("/update_gap_level", data=param)
+        $.post("/gap_level", data=param, function(ret_data){
+        gl1 = ret_data['gap_level1']
+        $("#gap_level1").val(gl1)
+        })
     })
+ 
+    $.get("/gap_level", function( data ) {
+        gl1 = data['gap_level1']
+        $("#gap_level1").val(gl1)
+    });
 
     $("#deleteBtn").click(function(){
         $.post("/delete", function(){

@@ -104,6 +104,8 @@ class BidMonitor(object):
 
         value_dict['url'] = self.url
         value_dict['bottom_price'] = self.bottom_price
+        if value_dict['bid_result'] == -1:
+            value_dict['bid_result'] = u'拍卖中'
         self.bid_status_dict = value_dict
         return value_dict
 

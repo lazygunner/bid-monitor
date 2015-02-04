@@ -13,13 +13,14 @@
                     <th>加价幅度</th>
                     <th>剩余加价次数</th>
                     <th>剩余时间</th>
-                    <th>状态</th>
+                    <th>加价状态</th>
+                    <th>拍卖状态</th>
                 </tr>
             </thead>
             <tbody>
                 {% for data in bid_status_list %}
                 <tr>
-                    <td>1</td>
+                    <td>{{loop.index}}</td>
                     <td><a href='{{data.url}}'>{{data.name}}</a></td>
                     <td>{{data.price_now}}</td>
                     <td>{{data.bottom_price}}</td>
@@ -34,6 +35,9 @@
                     {% elif data.status == 'danger'%}
                     <span class="label label-danger">距底价较远</span>
                     {% endif %}
+                    </td>
+                    <td>
+                        {{data.bid_result}}
                     </td>
                 </tr>
                 {% endfor %}

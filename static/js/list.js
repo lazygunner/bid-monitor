@@ -25,6 +25,13 @@ $(document).ready(function(){
 
     })
 
+    $("#updateGapLevel").click(function(){
+        var gap_dict = {"gap_level1":"0"}
+        gap_dict["gap_level1"] = int($("#gap_level1")[0].value)
+        param = {'gap_dict': JSON.stringify(gap_dict)}
+        $.post("/update_gap_level", data=param)
+    })
+
     $("#deleteBtn").click(function(){
         $.post("/delete", function(){
             location.reload()

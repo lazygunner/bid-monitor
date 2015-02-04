@@ -63,7 +63,7 @@ def upload_file():
 
 def _get_bid_status(auction):
     url = auction['url']
-    bottom_price = int(auction['bottomPrice'])
+    bottom_price = float(auction['bottomPrice'])
     bm = BidMonitor(url, bottom_price)
     bm.monitor()
     bid_status_dict = bm.analyze_statue()
@@ -107,6 +107,16 @@ def delete_all():
     redis_store.delete('auctions')
 
     return render_template('list.html', auction_list=[])
+
+
+@app.route('/update_gap_level', methods=['POST', 'GET'])
+def update_gap_level():
+    if request.method == 'POST':
+        gap_dict = request.values.to_dict().get('gap_dict', {})
+        gap_level1 = int(json.loads(gap_dict).get("gap_level1", 10))
+        redis_store.set('gap_level1', gap_level1)
+
+    return jsonify({'error': 0})
 
 if __name__ == '__main__':
     app.debug = True

@@ -6,12 +6,14 @@ import time
 
 import requests
 from lxml import html
+import redis
 
 user_agent = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1)'
               'AppleWebKit/537.36 (KHTML, like Gecko)'
               'Chrome/39.0.2171.95 Safari/537.36')
 
 logger = logging.getLogger('bidMonitor.monitor')
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 class BidMonitor(object):
@@ -109,14 +111,16 @@ class BidMonitor(object):
         price_now = self.bid_status_dict['price_now']
         raise_price = self.bid_status_dict['raise_price']
         remain_count = (self.bottom_price - price_now) / float(raise_price)
+        gap_level1 = r.get('gap_level1') or 10
+        gap_level2 = r.get('gap_level2') or 100
         if remain_count <= 0:
             status = 'ok'
-        elif remain_count > 0 and remain_count < 10:
+        elif remain_count > 0 and remain_count < gap_level1:
             status = 'warn'
         else:
             status = 'danger'
 
-        self.bid_status_dict['remain_count'] = int(remain_count)
+        self.bid_status_dict['remain_count'] = round(remain_count, 2)
         self.bid_status_dict['status'] = status
         return self.bid_status_dict
 

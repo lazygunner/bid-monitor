@@ -117,7 +117,7 @@ class BidMonitor(object):
         gap_level2 = r.get('gap_level2') or 100
         if remain_count <= 0:
             status = 'ok'
-        elif remain_count > 0 and remain_count < gap_level1:
+        elif remain_count > 0 and remain_count <= float(gap_level1):
             status = 'warn'
         else:
             status = 'danger'
